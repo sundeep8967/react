@@ -367,6 +367,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      # The build download runs in the background while Node is set up and
+      # node_modules is restored. The `wait` step below synchronizes on it.
+      # It must start after checkout, whose git clean would wipe `build/`.
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -378,18 +391,12 @@ jobs:
             **/node_modules
           key: runtime-and-compiler-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock', 'compiler/yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
       - run: yarn --cwd compiler install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - run: node --version
@@ -412,6 +419,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -423,16 +440,10 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - run: node --version
@@ -450,6 +461,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -461,16 +482,10 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - run: echo ${{ github.event.pull_request.head.sha || github.sha }} >> build/COMMIT_SHA
@@ -511,6 +526,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -522,16 +547,10 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - name: Search build artifacts for unminified errors
@@ -547,6 +566,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -558,16 +587,10 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - run: yarn check-release-dependencies
@@ -580,6 +603,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -590,16 +623,10 @@ jobs:
           path: |
             **/node_modules
           key: fixtures_dom-node_modules-v6-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock', 'fixtures/dom/yarn.lock') }}
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn --cwd fixtures/dom install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - name: Run DOM fixture tests
@@ -619,6 +646,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -632,8 +669,6 @@ jobs:
           path: |
             **/node_modules
           key: fixtures_flight-node_modules-v6-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock', 'fixtures/flight/yarn.lock') }}
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
       - run: yarn --cwd fixtures/flight install --frozen-lockfile
@@ -651,12 +686,8 @@ jobs:
         if: steps.cache_playwright_browsers.outputs.cache-hit != 'true'
         working-directory: fixtures/flight
         run: npx playwright install --with-deps chromium
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - name: Display structure of build
         run: ls -R build
       - name: Run tests
@@ -691,6 +722,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -702,16 +743,10 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
+      - name: Wait for archived build
+        wait: download_build
       - run: ./scripts/ci/pack_and_store_devtools_artifacts.sh ${{ matrix.browser }}
         env:
           RELEASE_CHANNEL: experimental
@@ -785,6 +820,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -796,22 +841,16 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
       - name: Restore Playwright Chromium
         uses: actions/cache/restore@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-browsers-v6-${{ runner.arch }}-${{ runner.os }}-${{ needs.runtime_playwright_chromium_cache.outputs.playwright_version }}
           fail-on-cache-miss: true
+      - name: Wait for archived build
+        wait: download_build
       - run: ./scripts/ci/run_devtools_e2e_tests.js
         env:
           RELEASE_CHANNEL: experimental
@@ -830,6 +869,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Ensure clean build directory
+        run: rm -rf build
+      - name: Restore archived build
+        id: download_build
+        uses: actions/download-artifact@v4
+        background: true
+        with:
+          pattern: _build_*
+          path: build
+          merge-multiple: true
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -841,16 +890,8 @@ jobs:
             **/node_modules
           key: runtime-node_modules-v10-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           # Don't use restore-keys here. Otherwise the cache grows indefinitely.
-      - name: Ensure clean build directory
-        run: rm -rf build
       - run: yarn install --frozen-lockfile
         if: steps.node_modules.outputs.cache-hit != 'true'
-      - name: Restore archived build
-        uses: actions/download-artifact@v4
-        with:
-          pattern: _build_*
-          path: build
-          merge-multiple: true
       - name: Restore Playwright Chromium
         uses: actions/cache/restore@v4
         with:
@@ -862,6 +903,8 @@ jobs:
         run: |
           echo "executable_path=$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')" >> "$GITHUB_OUTPUT"
           "$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')" --version
+      - name: Wait for archived build
+        wait: download_build
       - name: Run React DevTools CDT MCP e2e tests
         run: yarn --cwd packages/react-devtools-cdt-mcp test:e2e:ci
         env:
